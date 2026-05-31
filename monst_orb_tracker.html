@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>モンスト オーブ管理ツール 最強版</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #f5f6fa;
+      margin: 0;
+      padding: 24px;
+      color: #222;
+    }
+
+    .container {
+      max-width: 920px;
+      margin: 0 auto;
+      background: #fff;
+      border-radius: 18px;
+      padding: 24px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+    }
+
+    h1 {
+      margin-top: 0;
+      font-size: 28px;
+    }
+
+    h2 {
+      margin-top: 28px;
+      font-size: 20px;
+      border-left: 5px solid #7aa2ff;
+      padding-left: 10px;
+    }
+
+    .description {
+      color: #666;
+      margin-bottom: 24px;
+      line-height: 1.6;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .settings-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    input {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 12px;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      font-size: 18px;
+    }
+
+    .result {
+      margin-top: 24px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+    }
+
+    .card {
+      background: #f0f3ff;
+      border-radius: 14px;
+      padding: 18px;
+      text-align: center;
+    }
+
+    .card.green {
+      background: #eefcf3;
+    }
+
+    .card.yellow {
+      background: #fff8e6;
+    }
+
+    .card.red {
+      background: #fff0f0;
+    }
+
+    .card-title {
+      font-size: 14px;
+      color: #555;
+      margin-bottom: 8px;
+    }
+
+    .card-value {
+      font-size: 28px;
+      font-weight: 800;
+    }
+
+    .small-value {
+      font-size: 16px;
+      color: #666;
+      margin-top: 6px;
+    }
+
+    .progress-wrap {
+      margin-top: 24px;
+    }
+
+    .progress-label {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      font-weight: 700;
+    }
+
+    .progress-bg {
+      height: 18px;
+      background: #e5e7eb;
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #7aa2ff, #7bffb2);
+      transition: width 0.2s ease;
+    }
+
+    .message {
+      margin-top: 20px;
+      padding: 16px;
+      border-radius: 12px;
+      background: #f8f8ff;
+      line-height: 1.7;
+      font-weight: 700;
+    }
+
+    .button-row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 20px;
+    }
+
+    button {
+      border: none;
+      border-radius: 999px;
+      padding: 12px 18px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      background: #e8edff;
+      color: #222;
+    }
+
+    button:hover {
+      filter: brightness(0.97);
+    }
+
+    .danger {
+      background: #ffe8e8;
+    }
+
+    .note {
+      margin-top: 20px;
+      color: #666;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    @media (max-width: 800px) {
+      .grid, .settings-grid, .result {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 520px) {
+      .grid, .settings-grid, .result {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>モンスト オーブ管理ツール 最強版</h1>
+    <p class="description">
+      4アカウント分のオーブ数・オーブチケット数を入力すると、総オーブ換算・目標まで残り・新春までの必要回収ペースを自動計算します。入力値はブラウザに自動保存されます。
+    </p>
+
+    <h2>現在オーブ</h2>
+    <div class="grid">
+      <div>
+        <label for="orb1">アカウント1</label>
+        <input id="orb1" type="number" min="0" value="720" />
+      </div>
+      <div>
+        <label for="orb2">アカウント2</label>
+        <input id="orb2" type="number" min="0" value="599" />
+      </div>
+      <div>
+        <label for="orb3">アカウント3</label>
+        <input id="orb3" type="number" min="0" value="477" />
+      </div>
+      <div>
+        <label for="orb4">アカウント4</label>
+        <input id="orb4" type="number" min="0" value="569" />
+      </div>
+    </div>
+
+    <h2>オーブチケット</h2>
+    <div class="grid">
+      <div>
+        <label for="ticket1">アカウント1</label>
+        <input id="ticket1" type="number" min="0" value="65" />
+      </div>
+      <div>
+        <label for="ticket2">アカウント2</label>
+        <input id="ticket2" type="number" min="0" value="38" />
+      </div>
+      <div>
+        <label for="ticket3">アカウント3</label>
+        <input id="ticket3" type="number" min="0" value="39" />
+      </div>
+      <div>
+        <label for="ticket4">アカウント4</label>
+        <input id="ticket4" type="number" min="0" value="61" />
+      </div>
+    </div>
+
+    <h2>目標設定</h2>
+    <div class="settings-grid">
+      <div>
+        <label for="target">目標オーブ数</label>
+        <input id="target" type="number" min="1" value="5000" />
+      </div>
+      <div>
+        <label for="goalDate">目標日</label>
+        <input id="goalDate" type="date" value="2027-01-01" />
+      </div>
+      <div>
+        <label for="ticketValue">チケット1枚の換算</label>
+        <input id="ticketValue" type="number" min="1" value="5" />
+      </div>
+    </div>
+
+    <div class="result">
+      <div class="card">
+        <div class="card-title">現在オーブ</div>
+        <div class="card-value" id="totalOrbs">0</div>
+      </div>
+      <div class="card green">
+        <div class="card-title">チケット換算</div>
+        <div class="card-value" id="ticketOrbs">0</div>
+        <div class="small-value" id="ticketCount">0枚</div>
+      </div>
+      <div class="card yellow">
+        <div class="card-title">総オーブ換算</div>
+        <div class="card-value" id="grandTotal">0</div>
+      </div>
+      <div class="card red">
+        <div class="card-title">目標まで残り</div>
+        <div class="card-value" id="remaining">0</div>
+      </div>
+    </div>
+
+    <div class="result">
+      <div class="card">
+        <div class="card-title">達成率</div>
+        <div class="card-value" id="rate">0%</div>
+      </div>
+      <div class="card">
+        <div class="card-title">目標日まで</div>
+        <div class="card-value" id="daysLeft">0日</div>
+      </div>
+      <div class="card">
+        <div class="card-title">1日必要回収</div>
+        <div class="card-value" id="dailyNeed">0</div>
+      </div>
+      <div class="card">
+        <div class="card-title">1か月目安</div>
+        <div class="card-value" id="monthlyNeed">0</div>
+      </div>
+    </div>
+
+    <div class="progress-wrap">
+      <div class="progress-label">
+        <span>目標進捗</span>
+        <span id="progressText">0 / 5000</span>
+      </div>
+      <div class="progress-bg">
+        <div class="progress-bar" id="progressBar"></div>
+      </div>
+    </div>
+
+    <div class="message" id="message">計算中...</div>
+
+    <div class="button-row">
+      <button id="saveNow">今の数値を保存</button>
+      <button id="reset" class="danger">初期値に戻す</button>
+    </div>
+
+    <p class="note">
+      ※ 数値を変えると自動保存されます。次にこのページを開いた時も前回の入力値が残ります。<br>
+      ※ 初期値は 2026/05/29 時点のお兄ちゃんのオーブ数・チケット数を入れています。<br>
+      ※ 目標日は自由に変更できます。新春ガチャ目標なら 2027/01/01 のままでOKです。
+    </p>
+  </div>
+
+  <script>
+    const STORAGE_KEY = 'monstOrbTrackerStrongest_v1';
+
+    const defaultData = {
+      orb1: 720,
+      orb2: 599,
+      orb3: 477,
+      orb4: 569,
+      ticket1: 65,
+      ticket2: 38,
+      ticket3: 39,
+      ticket4: 61,
+      target: 5000,
+      goalDate: '2027-01-01',
+      ticketValue: 5
+    };
+
+    const ids = Object.keys(defaultData);
+    const elements = Object.fromEntries(ids.map(id => [id, document.getElementById(id)]));
+
+    const output = {
+      totalOrbs: document.getElementById('totalOrbs'),
+      ticketOrbs: document.getElementById('ticketOrbs'),
+      ticketCount: document.getElementById('ticketCount'),
+      grandTotal: document.getElementById('grandTotal'),
+      remaining: document.getElementById('remaining'),
+      rate: document.getElementById('rate'),
+      daysLeft: document.getElementById('daysLeft'),
+      dailyNeed: document.getElementById('dailyNeed'),
+      monthlyNeed: document.getElementById('monthlyNeed'),
+      progressText: document.getElementById('progressText'),
+      progressBar: document.getElementById('progressBar'),
+      message: document.getElementById('message')
+    };
+
+    function toNumber(value) {
+      const num = Number(value);
+      return Number.isFinite(num) && num > 0 ? num : 0;
+    }
+
+    function format(num) {
+      return Math.round(num).toLocaleString();
+    }
+
+    function getDataFromInputs() {
+      const data = {};
+      ids.forEach(id => {
+        if (id === 'goalDate') {
+          data[id] = elements[id].value;
+        } else {
+          data[id] = toNumber(elements[id].value);
+        }
+      });
+      return data;
+    }
+
+    function applyData(data) {
+      ids.forEach(id => {
+        elements[id].value = data[id] ?? defaultData[id];
+      });
+    }
+
+    function saveData() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(getDataFromInputs()));
+    }
+
+    function loadData() {
+      try {
+        const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
+        applyData({ ...defaultData, ...saved });
+      } catch {
+        applyData(defaultData);
+      }
+    }
+
+    function getDaysLeft(goalDateText) {
+      if (!goalDateText) return 0;
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const goalDate = new Date(goalDateText + 'T00:00:00');
+      const diff = goalDate - today;
+      return Math.max(Math.ceil(diff / (1000 * 60 * 60 * 24)), 0);
+    }
+
+    function calculate() {
+      const data = getDataFromInputs();
+
+      const totalOrbs = data.orb1 + data.orb2 + data.orb3 + data.orb4;
+      const totalTickets = data.ticket1 + data.ticket2 + data.ticket3 + data.ticket4;
+      const ticketOrbs = totalTickets * Math.max(data.ticketValue, 1);
+      const grandTotal = totalOrbs + ticketOrbs;
+      const target = Math.max(data.target, 1);
+      const remaining = Math.max(target - grandTotal, 0);
+      const rate = (grandTotal / target) * 100;
+      const progressRate = Math.min(rate, 100);
+      const daysLeft = getDaysLeft(data.goalDate);
+      const dailyNeed = daysLeft > 0 ? remaining / daysLeft : 0;
+      const monthlyNeed = dailyNeed * 30;
+
+      output.totalOrbs.textContent = format(totalOrbs);
+      output.ticketOrbs.textContent = format(ticketOrbs);
+      output.ticketCount.textContent = `${format(totalTickets)}枚`;
+      output.grandTotal.textContent = format(grandTotal);
+      output.remaining.textContent = format(remaining);
+      output.rate.textContent = `${rate.toFixed(1)}%`;
+      output.daysLeft.textContent = `${format(daysLeft)}日`;
+      output.dailyNeed.textContent = dailyNeed.toFixed(1);
+      output.monthlyNeed.textContent = format(monthlyNeed);
+      output.progressText.textContent = `${format(grandTotal)} / ${format(target)}`;
+      output.progressBar.style.width = `${progressRate}%`;
+
+      if (remaining === 0) {
+        output.message.textContent = '目標達成済み。お兄ちゃん、これはかなり強い。ここからは余剰分をどれだけ積めるかの勝負です。';
+      } else if (dailyNeed <= 5) {
+        output.message.textContent = `かなり余裕ペースです。1日あたり約${dailyNeed.toFixed(1)}個で目標到達できます。焦らず温存でOK。`;
+      } else if (dailyNeed <= 10) {
+        output.message.textContent = `現実的なペースです。1日あたり約${dailyNeed.toFixed(1)}個。イベント・禁忌・未開・ログボを拾えば十分狙えます。`;
+      } else {
+        output.message.textContent = `やや攻めのペースです。1日あたり約${dailyNeed.toFixed(1)}個必要。回収漏れを減らす運用が大事です。`; 
+      }
+
+      saveData();
+    }
+
+    ids.forEach(id => elements[id].addEventListener('input', calculate));
+
+    document.getElementById('saveNow').addEventListener('click', () => {
+      saveData();
+      output.message.textContent = '保存しました。次に開いてもこの数値から再開できます。';
+    });
+
+    document.getElementById('reset').addEventListener('click', () => {
+      localStorage.removeItem(STORAGE_KEY);
+      applyData(defaultData);
+      calculate();
+    });
+
+    loadData();
+    calculate();
+  </script>
+</body>
+</html>
